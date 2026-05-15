@@ -169,3 +169,5 @@ topology.clab.yaml.bak
 
 # Avoid committing node configurations if they are generated dynamically
 */config/
+**/clab-*/
+**/.clab-*/
