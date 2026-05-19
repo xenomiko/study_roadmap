@@ -152,15 +152,9 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Ignore the lab runtime directory inside labs/
-./clab-*/
 
-# Ignore the auto-generated graph/annotation files
-*.clab.yaml.bak
-*.clab.yaml.annot*
-# Ignore the lab runtime directory inside labs/
-./clab-*/
+# Ignore any containerlab runtime directory anywhere in the project
+**/clab-*/
 
-# Ignore the auto-generated graph/annotation files
-*.clab.yaml.bak
-*.clab.yaml.annot*
+# Ignore any json files anywhere in the project
+**/*.json
