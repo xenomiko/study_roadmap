@@ -158,3 +158,9 @@ cython_debug/
 # Ignore the auto-generated graph/annotation files
 *.clab.yaml.bak
 *.clab.yaml.annot*
+# Ignore the lab runtime directory inside labs/
+./clab-*/
+
+# Ignore the auto-generated graph/annotation files
+*.clab.yaml.bak
+*.clab.yaml.annot*
