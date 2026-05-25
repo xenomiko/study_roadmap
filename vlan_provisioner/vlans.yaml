@@ -1,0 +1,13 @@
+vlans:
+  - id: 10
+    name: "vlaan10"
+    description: "This is VLAN 10 for the sales department."
+  - id: 20
+    name: "vlaan20"
+    description: "This is VLAN 20 for the marketing department."
+  - id: 30
+    name: "vlaan30"
+    description: "This is VLAN 30 for the engineering department."
+  - id: 0
+    name: "Reserved VLAN 0"
+    description: "This VLAN ID is reserved and should not be used."

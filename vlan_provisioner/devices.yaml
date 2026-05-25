@@ -1,0 +1,10 @@
+devices:
+  
+  - host: "172.20.20.3"
+    username: "admin"
+    password: "admin"
+    device_type: "arista_eos"
+  - host: "172.20.20.2"
+    username: "admin"
+    password: "admin"
+    device_type: "arista_eos"
