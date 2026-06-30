@@ -27,7 +27,7 @@ arista_devices = [
 for device in arista_devices:
     with ConnectHandler(**device) as connection:
      output = connection.send_command('show version', use_textfsm=True)
-     device_dict = output[0]  # Assuming the output is a list of dictionaries
+     device_dict = output[0]  
      inventory_data.append(device_dict)
      connection.disconnect()
 

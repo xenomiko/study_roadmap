@@ -1,0 +1,37 @@
+devices:
+  ceos1:
+    kind: arista_ceos
+    templates:
+     - template.jinja2
+    interfaces:
+      - name: "Ethernet1"
+        ip_address: "192.168.10.1"
+        subnet: "255.255.255.0"
+    username: "admin"
+    mgmt_ip: "172.20.20.4"
+    password: "admin"
+    device_type: "arista_eos"    
+  ceos2:
+    kind: arista_ceos
+    templates:
+     - template.jinja2
+    interfaces:
+      - name: "Ethernet1"
+        ip_address: "192.168.10.2"
+        subnet: "255.255.255.0"
+    username: "admin"
+    mgmt_ip: "172.20.20.2"
+    password: "admin"
+    device_type: "arista_eos"
+  ceos3:
+    kind: arista_ceos
+    templates:
+     - template.jinja2
+    interfaces:
+      - name: "Ethernet1"
+        ip_address: "192.168.10.3"
+        subnet: "255.255.255.0"
+    username: "admin"
+    mgmt_ip: "172.20.20.3"
+    password: "admin"
+    device_type: "arista_eos"    

@@ -1,4 +1,5 @@
-name: project03-topology
+name: project04-inventory
+
 topology:
   nodes:
     ceos1:

@@ -20,9 +20,9 @@ def verify_deployment():
                 
                 # Check if the specific VLAN ID is present in the table string
                 if vlan_id in vlan_summary:
-                    print(f"✅ SUCCESS: VLAN {vlan_id} ('{vlan['name']}') is active on the switch.")
+                    print(f" SUCCESS: VLAN {vlan_id} ('{vlan['name']}') is active on the switch.")
                 else:
-                    print(f"❌ MISSING: VLAN {vlan_id} was NOT found in the database.")
+                    print(f" MISSING: VLAN {vlan_id} was NOT found in the database.")
 
 if __name__ == "__main__":
     verify_deployment()

@@ -8,6 +8,6 @@ vlans:
   - id: 30
     name: "vlaan30"
     description: "This is VLAN 30 for the engineering department."
-  - id: 0
-    name: "Reserved VLAN 0"
-    description: "This VLAN ID is reserved and should not be used."
+  - id: 40
+    name: "vlaan40"
+    description: "This is VLAN 40 for the finance department."
