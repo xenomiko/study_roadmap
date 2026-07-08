@@ -1,0 +1,21 @@
+devices:
+  - hostname: 172.20.20.2
+    username: admin
+    password: admin
+    interfaces:
+      - name: loopback10
+        ip_address: 1.1.1.1
+    template: arista_loopback.jinja2
+    compliance_file: templates/arista_compliance.yaml    
+    driver: eos
+  - hostname: 10.10.20.48
+    username: developer
+    password: C1sco12345  
+    template: cisco_loopback.jinja2
+    compliance_file: templates/cisco_compliance.yaml
+    driver: ios
+    interfaces:
+      - name: loopback10
+        ip_address: 1.1.1.1
+        ip_mask: 255.255.255.255
+  

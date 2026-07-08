@@ -1,0 +1,6 @@
+---
+- get_facts:
+    vendor: Arista
+    hostname: ceos1
+- get_interfaces:
+    Loopback10: {}

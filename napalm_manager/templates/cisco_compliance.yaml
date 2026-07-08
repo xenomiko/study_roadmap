@@ -1,0 +1,6 @@
+---
+- get_facts:
+    vendor: Cisco
+    hostname: cat8000v
+- get_interfaces:
+    Loopback10: {}
