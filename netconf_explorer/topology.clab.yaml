@@ -1,0 +1,7 @@
+name: netconf_yang
+
+topology:
+  nodes:
+    ceos1:
+      kind: arista_ceos
+      image: ceos:4.36.0F

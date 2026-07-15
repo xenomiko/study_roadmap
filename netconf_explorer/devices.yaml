@@ -1,0 +1,13 @@
+devices:
+  - host: 172.20.20.2
+    username: admin
+    password: admin
+    device_type: arista_eos
+    nc_name: default
+    config_commands: arista_template.jinja2
+    netconf_args:
+      host: 172.20.20.2
+      username: admin
+      password: admin
+      port: 830
+      hostkey_verify: False
