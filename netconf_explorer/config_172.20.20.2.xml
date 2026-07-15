@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="urn:uuid:db851511-451f-445d-b672-6c31350cb63f">
+<data xmlns:netconf="http://arista.com/yang/rpc/netconf" netconf:time-modified="2026-07-15T11:17:37.205058694Z">
+<interfaces xmlns="http://openconfig.net/yang/interfaces">
+<interface>
+<name>Management0</name>
+<config>
+<description>awal config b netconf</description>
+<mtu>0</mtu>
+<name>Management0</name>
+<type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+</config>
+<ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+<config>
+<fec-encoding xmlns="http://arista.com/yang/openconfig/interfaces/augments">
+<disabled>false</disabled>
+<fire-code>false</fire-code>
+<reed-solomon>false</reed-solomon>
+<reed-solomon544>false</reed-solomon544>
+</fec-encoding>
+<port-speed>SPEED_UNKNOWN</port-speed>
+<sfp-1000base-t xmlns="http://arista.com/yang/openconfig/interfaces/augments">false</sfp-1000base-t>
+</config>
+<pfc xmlns="http://arista.com/yang/openconfig/interfaces/augments"/>
+</ethernet>
+<subinterfaces>
+<subinterface>
+<index>0</index>
+<config>
+<description>awal config b netconf</description>
+</config>
+<ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+<addresses>
+<address>
+<ip>172.20.20.2</ip>
+<config>
+<ip>172.20.20.2</ip>
+<prefix-length>24</prefix-length>
+</config>
+</address>
+</addresses>
+<neighbors>
+<neighbor>
+<ip>172.20.20.1</ip>
+<config>
+<ip>172.20.20.1</ip>
+</config>
+</neighbor>
+</neighbors>
+</ipv4>
+<ipv6 xmlns="http://openconfig.net/yang/interfaces/ip">
+<addresses>
+<address>
+<ip>3fff:172:20:20::2</ip>
+<config>
+<ip>3fff:172:20:20::2</ip>
+<prefix-length>64</prefix-length>
+</config>
+</address>
+<address>
+<ip>fe80::ec43:6dff:fede:d498</ip>
+<config>
+<ip>fe80::ec43:6dff:fede:d498</ip>
+<prefix-length>64</prefix-length>
+</config>
+</address>
+</addresses>
+<neighbors>
+<neighbor>
+<ip>3fff:172:20:20::1</ip>
+<config>
+<ip>3fff:172:20:20::1</ip>
+</config>
+</neighbor>
+<neighbor>
+<ip>fe80::a885:12ff:febf:f5f2</ip>
+<config>
+<ip>fe80::a885:12ff:febf:f5f2</ip>
+</config>
+</neighbor>
+</neighbors>
+</ipv6>
+</subinterface>
+</subinterfaces>
+</interface>
+</interfaces>
+</data>
+</rpc-reply>

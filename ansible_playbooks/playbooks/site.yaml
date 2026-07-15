@@ -1,0 +1,28 @@
+---
+- name: Manage Arista Devices
+  hosts: arista
+  gather_facts: false
+  tasks:
+    - name: Run show version on Arista
+      arista.eos.eos_command:
+        commands:
+          - show version
+      register: arista_output
+
+    - name: Print Arista version info
+      ansible.builtin.debug:
+        var: arista_output.stdout_lines
+
+- name: Manage Cisco Devices
+  hosts: cisco
+  gather_facts: false
+  tasks:
+    - name: Run show version on Cisco
+      cisco.iosxr.iosxr_command:
+        commands:
+          - show version
+      register: cisco_output
+
+    - name: Print Cisco version info
+      ansible.builtin.debug:
+        var: cisco_output.stdout_lines

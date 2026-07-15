@@ -1,0 +1,37 @@
+---
+- name: Configure OSPF Routing on Arista cEOS Switches
+  hosts: arista
+  gather_facts: false
+  connection: ansible.netcommon.network_cli
+  become: true
+  become_method: enable
+
+  tasks:
+    - name: Configure global OSPF process and Router ID
+      arista.eos.eos_ospfv2:
+        config:
+          processes:
+            - process_id: 1
+              router_id: "{{ ospf_router_id }}"
+        state: merged
+      when: ospf_router_id is defined
+
+    - name: Enable OSPF on specified interfaces (Area 0)
+      arista.eos.eos_ospf_interfaces:
+        config: >
+          [
+            {% for intf in ospf_interfaces %}
+            {
+              "name": "{{ intf }}",
+              "address_family": [
+                {
+                  "afi": "ipv4",
+                  "process_id": 1,
+                  "area": "0.0.0.0"
+                }
+              ]
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+        state: merged
+      when: ospf_interfaces is defined

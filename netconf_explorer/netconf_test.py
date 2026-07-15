@@ -18,4 +18,7 @@ for device in devices["devices"]:
     with manager.connect(**netconf_args) as m:
      response = m.get_config(source='running', filter=interface_filter)
      dom =  parseString(response.xml)
-     print(dom.toprettyxml(indent=""))
+     prettified_xml = dom.toprettyxml(indent="")
+     filename = f"config_{netconf_args["host"]}.xml"
+     with open(filename, "w", encoding="utf-8") as file:
+        file.write(prettified_xml)

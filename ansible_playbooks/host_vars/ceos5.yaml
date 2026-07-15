@@ -1,0 +1,5 @@
+---
+ospf_router_id: "5.5.5.5"
+ospf_interfaces:
+  - Ethernet1
+  

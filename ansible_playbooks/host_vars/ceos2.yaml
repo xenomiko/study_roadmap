@@ -1,0 +1,5 @@
+---
+ospf_router_id: "2.2.2.2"
+ospf_interfaces:
+  - Ethernet1
+  - Ethernet2
