@@ -1,5 +1,0 @@
----
-ospf_router_id: "3.3.3.3"
-ospf_interfaces:
-  - Ethernet1
-  - Ethernet2
