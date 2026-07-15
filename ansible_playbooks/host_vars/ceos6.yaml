@@ -1,5 +1,0 @@
----
-ospf_router_id: "6.6.6.6"
-ospf_interfaces:
-  - Ethernet1
-  
