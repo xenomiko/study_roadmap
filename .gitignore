@@ -158,3 +158,4 @@ cython_debug/
 
 # Ignore any json files anywhere in the project
 **/*.json
+netconf_explorer/config_172.20.20.2.xml
