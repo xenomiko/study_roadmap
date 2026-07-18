@@ -20,23 +20,34 @@ class MerakiController:
                 stop=stop_after_attempt(5),
                 wait=wait_exponential(multiplier= 1 ,min= 1 ,max= 10)
             )
+    
+    def send_get(self, url):
+        response = requests.get(url, headers=self.headers, timeout=10)
+        return response
+    
     def get_orgs(self):
         URL = "https://api.meraki.com/api/v1/organizations"
-        response = requests.get(URL,headers= self.headers, timeout=10)   
+        response = self.send_get(URL)   
         if response.status_code == 200:
-            print(json.dumps(response.json(), indent=4))
-        else:
-            print(response.text) 
+            print(json.dumps(response.json(), indent=4)) 
         return response       
     
-
-    
     def get_networks(self, org_id):
-        URL = f"https://api.meraki.com/api/v1/organizations/{org_id}/networks"
-        response = requests.get(URL, headers= self.headers, timeout= 10)
-        if response.status_code == 200:
-            print(json.dumps(response.json(), indent=4))
-        return response    
+        URL = f"https://api.meraki.com/api/v1/organizations/{org_id}/networks?perPage=1000"
+        all_networks = []
+        while URL:
+            response = self.send_get(URL)
+            if response.status_code == 200:
+                page_data = response.json()
+                all_networks.extend(page_data)
+                if "next" in response.links:
+                    URL = response.links["next"]["url"]
+                else:
+                    URL= None
+            else:
+                print(f"Error: Grabbed status code {response.status_code}")
+                break            
+        return all_networks    
             
                         
 
