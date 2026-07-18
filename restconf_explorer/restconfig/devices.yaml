@@ -1,0 +1,18 @@
+devices:
+  - ip: 172.20.20.2
+    hostname: ceos1
+    username: admin
+    password: admin
+    driver: eos
+  - ip: 172.20.20.3
+    hostname: ceos2
+    username: admin
+    password: admin
+    driver: eos
+  - ip: 172.20.20.4
+    hostname: ceos3
+    username: admin
+    password: admin
+    driver: eos
+
+  
