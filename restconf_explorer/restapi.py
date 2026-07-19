@@ -9,6 +9,8 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_resul
 class MerakiController:
     def __init__(self):
         self.api_key = os.environ.get("MERAKI_API_KEY")
+        if not self.api_key:
+            raise ValueError("MERAKI_API_KEY environment variable is not set.")
         self.headers ={
            "X-Cisco-Meraki-API-Key": self.api_key
             } 
@@ -21,16 +23,24 @@ class MerakiController:
                 wait=wait_exponential(multiplier= 1 ,min= 1 ,max= 10)
             )
     
-    def send_get(self, url):
-        response = requests.get(url, headers=self.headers, timeout=10)
-        return response
-    
+    def send_get(self, url,params= None):
+        try:
+            response = requests.get(url, headers=self.headers, timeout=10, params= params)
+            return response
+        except RequestException as e:
+            print(f"HTTP GET request to {url} failed: {e}")
+            raise
+     
+        
     def get_orgs(self):
         URL = "https://api.meraki.com/api/v1/organizations"
-        response = self.send_get(URL)   
-        if response.status_code == 200:
-            print(json.dumps(response.json(), indent=4)) 
-        return response       
+        response = self.send_get(URL) 
+        try:  
+            if response.status_code == 200:
+                print(json.dumps(response.json(), indent=4)) 
+                return response  
+        except RequestException as e:
+            print(f"HTTP GET request to {URL} failed: {e}")         
     
     def get_networks(self, org_id):
         URL = f"https://api.meraki.com/api/v1/organizations/{org_id}/networks?perPage=1000"
@@ -49,7 +59,29 @@ class MerakiController:
                 break            
         return all_networks    
             
-                        
+    def send_post(self, URL, payload= None):
+        try: 
+            response = requests.post(URL, headers= self.headers, json= payload, timeout= 10)                   
+        except RequestException as e:
+            print
+            
+        
+    
+    def create_network(self,org_id):
+        payload = {
+                "name": "Branch_Office_Chicago",
+                "productTypes": ["appliance", "switch", "wireless"],
+                "timeZone": "America/Chicago"
+        }
+        URL =   f"https://api.meraki.com/api/v1/organizations/{org_id}/networks "  
+        try:
+            response = self.send_post(URL, payload=payload) 
+            return response  
+        except RequestException as e:
+            print(f"error {e}: couldnt connect to device")
+            
+
+ 
 
 
 class AristaRestconf:
@@ -88,4 +120,5 @@ class AristaRestconf:
         for device in self.devices["devices"]:
             params = {"fields": "interface(config)"}
             endpoint = "/data/openconfig-interfaces:interfaces"
-            self.send_get_requests(device, endpoint, params=params)        
+            self.send_get_requests(device, endpoint, params=params)
+            return         
