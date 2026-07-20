@@ -1,10 +1,15 @@
 import os
 import requests
-import json
-import time
-import yaml
-from requests.exceptions import RequestException
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_result
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
+
+
+
+def is_retryable(exception):
+    if isinstance(exception, requests.HTTPError) and exception.response is not None:
+        return exception.response.status_code == 429  
+    if isinstance(exception, (requests.ConnectionError, requests.Timeout)):
+        return True
+    return False
 
 class MerakiController:
     def __init__(self):
@@ -16,109 +21,62 @@ class MerakiController:
             } 
         
     
-    
     @retry(
-                retry=retry_if_result(lambda response : response.status_code == 429),
+                retry= retry_if_exception(is_retryable),
                 stop=stop_after_attempt(5),
-                wait=wait_exponential(multiplier= 1 ,min= 1 ,max= 10)
+                wait=wait_exponential(multiplier= 1 ,min= 1 ,max= 10),
+                reraise= True
             )
     
     def send_get(self, url,params= None):
-        try:
-            response = requests.get(url, headers=self.headers, timeout=10, params= params)
-            return response
-        except RequestException as e:
-            print(f"HTTP GET request to {url} failed: {e}")
-            raise
-     
+        response = requests.get(url, headers=self.headers, timeout=10, params= params)
+        response.raise_for_status()
+        return response
         
+     
     def get_orgs(self):
         URL = "https://api.meraki.com/api/v1/organizations"
         response = self.send_get(URL) 
-        try:  
-            if response.status_code == 200:
-                print(json.dumps(response.json(), indent=4)) 
-                return response  
-        except RequestException as e:
-            print(f"HTTP GET request to {URL} failed: {e}")         
+        return response.json()
     
+
     def get_networks(self, org_id):
         URL = f"https://api.meraki.com/api/v1/organizations/{org_id}/networks?perPage=1000"
         all_networks = []
         while URL:
             response = self.send_get(URL)
-            if response.status_code == 200:
-                page_data = response.json()
-                all_networks.extend(page_data)
-                if "next" in response.links:
-                    URL = response.links["next"]["url"]
-                else:
-                    URL= None
+            
+            page_data = response.json()
+            all_networks.extend(page_data)
+            if "next" in response.links:
+                URL = response.links["next"]["url"]
             else:
-                print(f"Error: Grabbed status code {response.status_code}")
-                break            
+                    URL= None         
         return all_networks    
-            
+
+    @retry(
+        retry=retry_if_exception(is_retryable),
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        reraise=True,
+)
     def send_post(self, URL, payload= None):
-        try: 
             response = requests.post(URL, headers= self.headers, json= payload, timeout= 10)                   
-        except RequestException as e:
-            print
-            
-        
+            response.raise_for_status()
+            return response
     
-    def create_network(self,org_id):
+
+    def create_network(self,org_id, network_name,product_types = None, timezone = None):
         payload = {
-                "name": "Branch_Office_Chicago",
-                "productTypes": ["appliance", "switch", "wireless"],
-                "timeZone": "America/Chicago"
+                "name": network_name,
         }
-        URL =   f"https://api.meraki.com/api/v1/organizations/{org_id}/networks "  
-        try:
-            response = self.send_post(URL, payload=payload) 
-            return response  
-        except RequestException as e:
-            print(f"error {e}: couldnt connect to device")
-            
-
- 
-
-
-class AristaRestconf:
-    def __init__(self):
-        try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            devices_path = os.path.join(current_dir, "restconfig", "devices.yaml")
-            with open(devices_path, "r") as f:
-                self.devices = yaml.safe_load(f)
-        except Exception as e:
-            print(f"error {e}: cant find the file") 
-            self.devices = {"devices": []}       
-
-
-
-    def send_get_requests(self, device, endpoint, params= None):
-        ip = device["ip"]
-        hostname = device["hostname"]
-        username = device["username"]
-        password = device["password"]
-        headers = {
-                "Accept": "application/yang-data+json",
-                "Content-Type": "application/yang-data+json"
-            }
-        URL = f"https://{ip}:6020/restconf{endpoint}"
-        try:
-            response = requests.get(URL, auth=(username, password), timeout= 10, verify=False, params= params, headers= headers)
-            if response.status_code == 200:
-                print(json.dumps(response.json(), indent=4))    
-            else :
-                print(response.text)
-        except RequestException as e:
-            print(f"error {e}: couldnt connect to device {hostname}")
-    
-    def get_interfaces(self):
-        for device in self.devices["devices"]:
-            params = {"fields": "interface(config)"}
-            endpoint = "/data/openconfig-interfaces:interfaces"
-            self.send_get_requests(device, endpoint, params=params)
-            return         
+        if product_types is not None:
+            payload["productTypes"] = product_types
+        else:
+            product_types = ["appliance"]    
+        if timezone is not None:
+            payload["timeZone"] = timezone    
+        URL =   f"https://api.meraki.com/api/v1/organizations/{org_id}/networks"  
+        
+        response = self.send_post(URL, payload=payload) 
+        return response.json()
