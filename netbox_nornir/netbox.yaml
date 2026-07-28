@@ -1,0 +1,86 @@
+site:
+  name: "Containerlab Environment"
+  slug: "clab-env"
+  status: "active"
+
+manufacturer:
+  name: "Arista"
+  slug: "arista"
+
+device_type:
+  model: "cEOS-LAB"
+  slug: "ceos-lab"
+  manufacturer_slug: "arista"
+  u_height: 1
+  is_full_depth: false
+
+role:
+  name: "Virtual Router"
+  slug: "virtual-router"
+  color: "00bcd4"
+
+devices:
+  - name: "ceos1"
+    site_slug: "clab-env"
+    device_type_slug: "ceos-lab"
+    role_slug: "virtual-router"
+    status: "active"
+
+  - name: "ceos2"
+    site_slug: "clab-env"
+    device_type_slug: "ceos-lab"
+    role_slug: "virtual-router"
+    status: "active"
+
+  - name: "ceos3"
+    site_slug: "clab-env"
+    device_type_slug: "ceos-lab"
+    role_slug: "virtual-router"
+    status: "active"
+
+interfaces:
+  - device_name: "ceos1"
+    name: "eth1"
+    type: "virtual"
+  - device_name: "ceos1"
+    name: "eth2"
+    type: "virtual"
+
+  - device_name: "ceos2"
+    name: "eth1"
+    type: "virtual"
+  - device_name: "ceos2"
+    name: "eth2"
+    type: "virtual"
+
+  - device_name: "ceos3"
+    name: "eth1"
+    type: "virtual"
+  - device_name: "ceos3"
+    name: "eth2"
+    type: "virtual"
+
+cables:
+  - status: "connected"
+    a_side:
+      device: "ceos1"
+      interface: "eth1"
+    b_side:
+      device: "ceos2"
+      interface: "eth1"
+
+  - status: "connected"
+    a_side:
+      device: "ceos2"
+      interface: "eth2"
+    b_side:
+      device: "ceos3"
+      interface: "eth1"
+
+  - status: "connected"
+    a_side:
+      device: "ceos3"
+      interface: "eth2"
+    b_side:
+      device: "ceos1"
+      interface: "eth2"
