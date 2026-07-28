@@ -14,8 +14,8 @@ from schemas import (
     ManufacturerCreate,
     DeviceTypeCreate,
 )
-from typing import Union
-from pydantic import BaseModel
+from typing import Union, List, Type
+from pydantic import BaseModel, ValidationError
 import csv
 
 logger = logging.getLogger(__name__)
@@ -102,4 +102,26 @@ def get_or_create_object(
         raise
 
 
-def sync_ressources()
+def sync_resources(
+    endpoint: Endpoint,
+    items: List[Dict[str, Any]],
+    model_class: Type[BaseModel],
+    lookup_field: str = "slug",
+):
+    created_or_found_objects = []
+    for raw_item in items:
+        try:
+            validated_payload = model_class.model_validate(raw_item)
+        except ValidationError as err:
+            logger.error(f"Validation failed for item {raw_item}: {err}")
+            continue
+        lookup_value = getattr(validated_payload, lookup_field)
+        lookup_kwargs = {lookup_field: lookup_value}
+        obj = get_or_create_object(
+            endpoint=endpoint,
+            lookup_kwargs=lookup_kwargs,
+            payload=validated_payload,
+        )
+
+        created_or_found_objects.append(obj)
+    return created_or_found_objects
