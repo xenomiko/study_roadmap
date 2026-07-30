@@ -1,42 +1,42 @@
-site:
-  name: "Containerlab Environment"
-  slug: "clab-env"
-  status: "active"
+sites:
+  - name: "Containerlab Environment"
+    slug: "clab-env"
+    status: "active"
 
-manufacturer:
-  name: "Arista"
-  slug: "arista"
+manufacturers:
+  - name: "Arista"
+    slug: "arista"
 
-device_type:
-  model: "cEOS-LAB"
-  slug: "ceos-lab"
-  manufacturer_slug: "arista"
-  u_height: 1
-  is_full_depth: false
+roles:
+  - name: "Virtual Router"
+    slug: "virtual-router"
+    color: "00bcd4"
 
-role:
-  name: "Virtual Router"
-  slug: "virtual-router"
-  color: "00bcd4"
+device_types:
+  - model: "cEOS-LAB"
+    slug: "ceos-lab"
+    manufacturer: "arista"
+    u_height: 1
+    is_full_depth: false
 
 devices:
   - name: "ceos1"
-    site_slug: "clab-env"
-    device_type_slug: "ceos-lab"
-    role_slug: "virtual-router"
+    site: "clab-env"
+    device_type: "ceos-lab"
+    role: "virtual-router"
     status: "active"
 
   - name: "ceos2"
-    site_slug: "clab-env"
-    device_type_slug: "ceos-lab"
-    role_slug: "virtual-router"
+    site: "clab-env"
+    device_type: "ceos-lab"
+    role: "virtual-router"
     status: "active"
 
   - name: "ceos3"
-    site_slug: "clab-env"
-    device_type_slug: "ceos-lab"
-    role_slug: "virtual-router"
-    status: "active"
+    site: "clab-env"
+    device_type: "ceos-lab"
+    role: "virtual-router"
+    status: "staged"
 
 interfaces:
   - device_name: "ceos1"
