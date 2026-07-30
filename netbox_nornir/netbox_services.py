@@ -1,19 +1,11 @@
 import yaml
 from pathlib import Path
 import pynetbox
-from dotenv import load_dotenv
 import os
 import logging
 from pynetbox import RequestError
 from typing import Any, Dict
 from pynetbox.core.endpoint import Endpoint
-from schemas import (
-    NetBoxDeviceCreate,
-    SiteCreate,
-    RoleCreate,
-    ManufacturerCreate,
-    DeviceTypeCreate,
-)
 from typing import Union, List, Type
 from pydantic import BaseModel, ValidationError
 import csv
@@ -79,22 +71,27 @@ def resolve_object_id(
     return obj.id
 
 
-def get_or_create_object(
-    endpoint: Endpoint, lookup_kwargs: Dict[str, Any], payload: BaseModel
-):
+def sync_object(endpoint: Endpoint, lookup_kwargs: Dict[str, Any], payload: BaseModel):
     payload_dict = payload.model_dump(exclude_none=True)
     try:
         existing_obj = endpoint.get(**lookup_kwargs)
         if existing_obj:
-            logger.info(
-                f"[{endpoint.name}] Object already exists matching {lookup_kwargs}."
-            )
+            updated = existing_obj.update(payload_dict)
+            if updated:
+                logger.info(
+                    f"[{endpoint.name}] Updated object matching {lookup_kwargs}."
+                )
+            else:
+                logger.info(
+                    f"[{endpoint.name}] Object matching {lookup_kwargs} is already up-to-date."
+                )
             return existing_obj
         created_obj = endpoint.create(payload_dict)
         logger.info(
             f"[{endpoint.name}] Successfully created object ID {created_obj.id}."
         )
         return created_obj
+
     except RequestError as e:
         logger.error(
             f"[{endpoint.name}] NetBox API request failed for {lookup_kwargs}. Error: {e}"
@@ -117,7 +114,7 @@ def sync_resources(
             continue
         lookup_value = getattr(validated_payload, lookup_field)
         lookup_kwargs = {lookup_field: lookup_value}
-        obj = get_or_create_object(
+        obj = sync_object(
             endpoint=endpoint,
             lookup_kwargs=lookup_kwargs,
             payload=validated_payload,
