@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_netbox_client(validate_connection: bool = True) -> pynetbox.core.api.Api:
-    NETBOX_TOKEN = os.getenv("NETBOX_TOKEN")
-    NETBOX_URL = os.getenv("NETBOX_URL")
+    NETBOX_TOKEN = os.getenv("NB_TOKEN")
+    NETBOX_URL = os.getenv("NB_URL")
     if not NETBOX_TOKEN or not NETBOX_URL:
         error_msg = (
             "Missing required environment variables: NETBOX_URL and/or" " NETBOX_TOKEN"
