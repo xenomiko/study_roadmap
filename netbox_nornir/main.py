@@ -5,6 +5,7 @@ from schemas import (
     RoleCreate,
     DeviceTypeCreate,
     NetBoxDeviceCreate,
+    ConfigContextCreate,
 )
 from netbox_services import (
     get_netbox_client,
@@ -46,6 +47,30 @@ def main():
 
     sync_resources(
         nb.dcim.devices, devices_data, NetBoxDeviceCreate, lookup_field="name"
+    )
+    config_contexts_data = data.get("config_contexts", [])
+    relation_endpoints = {
+        "regions": nb.dcim.regions,
+        "site_groups": nb.dcim.site_groups,
+        "sites": nb.dcim.sites,
+        "locations": nb.dcim.locations,
+        "device_types": nb.dcim.device_types,
+        "roles": nb.dcim.device_roles,
+        "platforms": nb.dcim.platforms,
+        "cluster_groups": nb.virtualization.cluster_groups,
+        "clusters": nb.virtualization.clusters,
+        "tenant_groups": nb.tenancy.tenant_groups,
+        "tenants": nb.tenancy.tenants,
+    }
+    for cc in config_contexts_data:
+        for field, endpoint in relation_endpoints.items():
+            if field in cc and cc[field]:
+                cc[field] = [resolve_object_id(endpoint, slug) for slug in cc[field]]
+    sync_resources(
+        nb.extras.config_contexts,
+        config_contexts_data,
+        ConfigContextCreate,
+        lookup_field="name",
     )
 
 

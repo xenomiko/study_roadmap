@@ -61,3 +61,23 @@ class DeviceTypeCreate(NetBoxBaseSchema):
     slug: str = Field(min_length=1, max_length=100, pattern=SLUG_PATTERN)
     manufacturer: int
     part_number: Optional[str] = Field(default=None, min_length=1)
+
+
+class ConfigContextCreate(NetBoxBaseSchema):
+    name: str = Field(min_length=1)
+    weight: int = 100
+    description: Optional[str] = None
+    is_active: bool = True
+    data: dict[str, Any]
+    regions: Optional[list[int]] = None
+    site_groups: Optional[list[int]] = None
+    sites: Optional[list[int]] = None
+    locations: Optional[list[int]] = None
+    device_types: Optional[list[int]] = None
+    roles: Optional[list[int]] = None
+    platforms: Optional[list[int]] = None
+    cluster_groups: Optional[list[int]] = None
+    clusters: Optional[list[int]] = None
+    tenant_groups: Optional[list[int]] = None
+    tenants: Optional[list[int]] = None
+    tags: Optional[list[str]] = None
