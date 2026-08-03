@@ -81,3 +81,22 @@ class ConfigContextCreate(NetBoxBaseSchema):
     tenant_groups: Optional[list[int]] = None
     tenants: Optional[list[int]] = None
     tags: Optional[list[str]] = None
+
+
+class InterfaceCreate(NetBoxBaseSchema):
+    name: str = Field(min_length=1)
+    device: int
+    type: str = "1000base-t"
+    enabled: Optional[bool] = True
+    mgmt_only: Optional[bool] = None
+    description: Optional[str] = None
+
+
+class IPAddressCreate(NetBoxBaseSchema):
+    address: str = Field(min_length=1)
+    status: Literal["active", "reserved", "deprecated", "dhcp", "slaac"] = "active"
+    assigned_object_type: Optional[str] = None
+    assigned_object_id: Optional[int] = None
+    dns_name: Optional[str] = None
+    description: Optional[str] = None
+    tenant: Optional[int] = None
