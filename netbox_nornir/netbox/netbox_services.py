@@ -122,3 +122,44 @@ def sync_resources(
 
         created_or_found_objects.append(obj)
     return created_or_found_objects
+
+
+def sync_cable(nb, cables_data: List[Dict[str, Any]]) -> None:
+    for cable in cables_data:
+        a_side = cable.get("a_side", {})
+        b_side = cable.get("b_side", {})
+        try:
+            dev_a_id = resolve_object_id(nb.dcim.devices, name=a_side.get("device"))
+            iface_a = nb.dcim.interfaces.get(
+                device_id=dev_a_id, name=a_side.get("interface")
+            )
+            dev_b_id = resolve_object_id(nb.dcim.devices, name=b_side.get("device"))
+            iface_b = nb.dcim.interfaces.get(
+                device_id=dev_b_id, name=b_side.get("interface")
+            )
+        except Exception as err:
+            logger.error(f"Error resolving endpoints for cable {cable}: {err}")
+            continue
+        if not iface_a or not iface_b:
+            logger.error(f"interface not found for entry: {cable}")
+            continue
+        if iface_a.cable or iface_b.cable:
+            logger.info(
+                f"Cable between {a_side.get('device')}:{a_side.get('interface')} "
+                f"and {b_side.get('device')}:{b_side.get('interface')} already exists. Skipping."
+            )
+            continue
+        cable_payload = {
+            "status": cable.get("status", "connected"),
+            "a_terminations": [
+                {"object_type": "dcim.interface", "object_id": iface_a.id}
+            ],
+            "b_terminations": [
+                {"object_type": "dcim.interface", "object_id": iface_b.id}
+            ],
+        }
+        try:
+            new_cable = nb.dcim.cables.create(cable_payload)
+            logger.info(f"Successfully created cable ID {new_cable.id}")
+        except RequestError as err:
+            logger.error(f"Failed to create cable for {cable}: {err}")
