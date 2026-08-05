@@ -59,14 +59,11 @@ def load_device_data(file_path: Union[str, Path]):
         raise ValueError(f"Error parsing CSV file '{path.name}': {e}") from e
 
 
-def resolve_object_id(
-    endpoint: Endpoint, lookup_value: str, lookup_field: str = "slug"
-) -> int:
-    search_kwargs = {lookup_field: lookup_value}
-    obj = endpoint.get(**search_kwargs)
+def resolve_object_id(endpoint: Endpoint, **kwargs) -> int:
+    obj = endpoint.get(**kwargs)
     if obj is None:
         raise ValueError(
-            f"Could not find '{lookup_value}' in '{endpoint.name}' using field '{lookup_field}'."
+            f"Could not find object in '{endpoint.name}' matching criteria: {kwargs}"
         )
     return obj.id
 
@@ -103,7 +100,7 @@ def sync_resources(
     endpoint: Endpoint,
     items: List[Dict[str, Any]],
     model_class: Type[BaseModel],
-    lookup_field: str = "slug",
+    lookup_field: Union[str, List[str]] = "slug",
 ):
     created_or_found_objects = []
     for raw_item in items:
@@ -112,8 +109,11 @@ def sync_resources(
         except ValidationError as err:
             logger.error(f"Validation failed for item {raw_item}: {err}")
             continue
-        lookup_value = getattr(validated_payload, lookup_field)
-        lookup_kwargs = {lookup_field: lookup_value}
+        fields = [lookup_field] if isinstance(lookup_field, str) else lookup_field
+        lookup_kwargs = {
+            lookup_field: getattr(validated_payload, lookup_field)
+            for lookup_field in fields
+        }
         obj = sync_object(
             endpoint=endpoint,
             lookup_kwargs=lookup_kwargs,
