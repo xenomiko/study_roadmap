@@ -32,7 +32,7 @@ def main():
     device_types_data = data.get("device_types", [])
     for dt in device_types_data:
         dt["manufacturer"] = resolve_object_id(
-            nb.dcim.manufacturers, dt["manufacturer"]
+            nb.dcim.manufacturers, slug=dt["manufacturer"]
         )
 
     sync_resources(
@@ -43,9 +43,11 @@ def main():
 
     devices_data = data.get("devices", [])
     for dev in devices_data:
-        dev["site"] = resolve_object_id(nb.dcim.sites, dev["site"])
-        dev["device_type"] = resolve_object_id(nb.dcim.device_types, dev["device_type"])
-        dev["role"] = resolve_object_id(nb.dcim.device_roles, dev["role"])
+        dev["site"] = resolve_object_id(nb.dcim.sites, slug=dev["site"])
+        dev["device_type"] = resolve_object_id(
+            nb.dcim.device_types, slug=dev["device_type"]
+        )
+        dev["role"] = resolve_object_id(nb.dcim.device_roles, slug=dev["role"])
 
     sync_resources(
         nb.dcim.devices, devices_data, NetBoxDeviceCreate, lookup_field="name"
@@ -67,7 +69,9 @@ def main():
     for cc in config_contexts_data:
         for field, endpoint in relation_endpoints.items():
             if field in cc and cc[field]:
-                cc[field] = [resolve_object_id(endpoint, slug) for slug in cc[field]]
+                cc[field] = [
+                    resolve_object_id(endpoint, slug=slug) for slug in cc[field]
+                ]
     sync_resources(
         nb.extras.config_contexts,
         config_contexts_data,
