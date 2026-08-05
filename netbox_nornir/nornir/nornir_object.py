@@ -23,5 +23,6 @@ dry_run_results = nr.run(
     task=napalm_configure,
     configuration=vlan_config,
     dry_run=False,
+load_dotenv()
 )
 print_result(dry_run_results)

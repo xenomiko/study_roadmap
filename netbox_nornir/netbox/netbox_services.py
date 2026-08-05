@@ -109,18 +109,21 @@ def sync_resources(
         except ValidationError as err:
             logger.error(f"Validation failed for item {raw_item}: {err}")
             continue
-        fields = [lookup_field] if isinstance(lookup_field, str) else lookup_field
-        lookup_kwargs = {
-            lookup_field: getattr(validated_payload, lookup_field)
-            for lookup_field in fields
-        }
-        obj = sync_object(
-            endpoint=endpoint,
-            lookup_kwargs=lookup_kwargs,
-            payload=validated_payload,
-        )
 
-        created_or_found_objects.append(obj)
+        fields = [lookup_field] if isinstance(lookup_field, str) else lookup_field
+        lookup_kwargs = {field: getattr(validated_payload, field) for field in fields}
+
+        try:
+            obj = sync_object(
+                endpoint=endpoint,
+                lookup_kwargs=lookup_kwargs,
+                payload=validated_payload,
+            )
+            created_or_found_objects.append(obj)
+        except RequestError as err:
+            logger.error(f"Sync failed for item {raw_item}: {err}")
+            continue
+
     return created_or_found_objects
 
 
