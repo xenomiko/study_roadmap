@@ -6,6 +6,8 @@ from schemas import (
     DeviceTypeCreate,
     NetBoxDeviceCreate,
     ConfigContextCreate,
+    InterfaceCreate,
+    IPAddressCreate,
 )
 from netbox_services import (
     get_netbox_client,
@@ -71,6 +73,31 @@ def main():
         config_contexts_data,
         ConfigContextCreate,
         lookup_field="name",
+    )
+    interfaces_data = data.get("interfaces", [])
+    for iface in interfaces_data:
+        iface["device"] = resolve_object_id(
+            nb.dcim.devices, name=iface.pop("device_name")
+        )
+    sync_resources(
+        nb.dcim.interfaces,
+        interfaces_data,
+        InterfaceCreate,
+        lookup_field=["device", "name"],
+    )
+    ip_addresses_data = data.get("ip_addresses", [])
+    for ip in ip_addresses_data:
+        device_name = ip.pop("device_name", None)
+        interface_name = ip.pop("interface_name", None)
+        if device_name and interface_name:
+            dev_id = resolve_object_id(nb.dcim.devices, name=device_name)
+            iface_id = resolve_object_id(
+                nb.dcim.interfaces, device_id=dev_id, name=interface_name
+            )
+            ip["assigned_object_type"] = "dcim.interface"
+            ip["assigned_object_id"] = iface_id
+    sync_resources(
+        nb.ipam.ip_addresses, ip_addresses_data, IPAddressCreate, lookup_field="address"
     )
 
 
