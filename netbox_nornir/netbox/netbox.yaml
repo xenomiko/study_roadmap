@@ -57,24 +57,24 @@ interfaces:
   # Data Interfaces
   - device_name: "ceos1"
     name: "eth1"
-    type: "virtual"
+    type: "1000base-t"
   - device_name: "ceos1"
     name: "eth2"
-    type: "virtual"
+    type: "1000base-t"
 
   - device_name: "ceos2"
     name: "eth1"
-    type: "virtual"
+    type: "1000base-t"
   - device_name: "ceos2"
     name: "eth2"
-    type: "virtual"
+    type: "1000base-t"
 
   - device_name: "ceos3"
     name: "eth1"
-    type: "virtual"
+    type: "1000base-t"
   - device_name: "ceos3"
     name: "eth2"
-    type: "virtual"
+    type: "1000base-t"
 
 ip_addresses:
   - address: "172.20.20.3/24"
