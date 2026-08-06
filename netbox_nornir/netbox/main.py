@@ -14,6 +14,7 @@ from netbox_services import (
     load_device_data,
     resolve_object_id,
     sync_resources,
+    sync_cable,
 )
 from dotenv import load_dotenv
 
@@ -87,7 +88,7 @@ def main():
         nb.dcim.interfaces,
         interfaces_data,
         InterfaceCreate,
-        lookup_field=["device", "name"],
+        lookup_field=[("device", "device_id"), "name"],
     )
     ip_addresses_data = data.get("ip_addresses", [])
     for ip in ip_addresses_data:
@@ -103,6 +104,8 @@ def main():
     sync_resources(
         nb.ipam.ip_addresses, ip_addresses_data, IPAddressCreate, lookup_field="address"
     )
+    cables_data = data.get("cables", [])
+    sync_cable(nb, cables_data)
 
 
 if __name__ == "__main__":

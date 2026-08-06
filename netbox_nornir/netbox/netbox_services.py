@@ -100,7 +100,7 @@ def sync_resources(
     endpoint: Endpoint,
     items: List[Dict[str, Any]],
     model_class: Type[BaseModel],
-    lookup_field: Union[str, List[str]] = "slug",
+    lookup_field: Union[str, List[Union[str, tuple]]] = "slug",
 ):
     created_or_found_objects = []
     for raw_item in items:
@@ -111,7 +111,10 @@ def sync_resources(
             continue
 
         fields = [lookup_field] if isinstance(lookup_field, str) else lookup_field
-        lookup_kwargs = {field: getattr(validated_payload, field) for field in fields}
+        lookup_kwargs = {}
+        for f in fields:
+            attr_name, param_name = f if isinstance(f, tuple) else (f, f)
+            lookup_kwargs[param_name] = getattr(validated_payload, attr_name)
 
         try:
             obj = sync_object(
